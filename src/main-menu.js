@@ -500,8 +500,8 @@ export class Menu extends Phaser.Scene {
 
   getDataOfUser(){
 
-    //fetch("https://linipoin-api.macroad.co.id/api/v1.0/leaderboard/check_user_limit/?lang=en&session="+userSession+"&linigame_platform_token=891ff5abb0c27161fb683bcaeb1d73accf1c9c5e", {
-    fetch("https://linipoin-dev.macroad.co.id/api/v1.0/leaderboard/check_user_limit/?lang=en&session="+userSession+"&linigame_platform_token=891ff5abb0c27161fb683bcaeb1d73accf1c9c5e", {
+    fetch("https://linipoin-api.macroad.co.id/api/v1.0/leaderboard/check_user_limit/?lang=en&session="+userSession+"&linigame_platform_token=891ff5abb0c27161fb683bcaeb1d73accf1c9c5e", {
+    //fetch("https://linipoin-dev.macroad.co.id/api/v1.0/leaderboard/check_user_limit/?lang=en&session="+userSession+"&linigame_platform_token=891ff5abb0c27161fb683bcaeb1d73accf1c9c5e", {
 
       method:"GET",
 
@@ -538,8 +538,8 @@ export class Menu extends Phaser.Scene {
 
     let dataID;
 
-    //fetch("https://linipoin-api.macroad.co.id/api/v1.0/leaderboard/imlek_game/",{
-    fetch("https://linipoin-dev.macroad.co.id/api/v1.0/leaderboard/imlek_game/",{
+    fetch("https://linipoin-api.macroad.co.id/api/v1.0/leaderboard/imlek_game/",{
+    //fetch("https://linipoin-dev.macroad.co.id/api/v1.0/leaderboard/imlek_game/",{
 
       method:"POST",
       headers: {

@@ -91,17 +91,17 @@ export class In_Game extends Phaser.Scene {
     light_ornament = this.add.tileSprite(360, 105, 500, 96, 'light_ornament').setScale(2.5);
     light_ornament.setOrigin(0.5, 0.5);
 
-    chinatown = this.add.tileSprite(360, 950, 1052, 236, 'chinatown').setScale(2.0);
+    chinatown = this.add.tileSprite(360, 850, 526, 118, 'chinatown').setScale(3.5);
     chinatown.setOrigin(0.5, 0.5);
 
     scoreBox = this.add.sprite(610, 80, 'score_box').setScale(.7);
     scoreBox.setOrigin(0.5, 0.5);
 
-    plane = this.add.sprite(-400, 350, 'plane').setScale(0.2);
+    plane = this.add.sprite(-400, 350, 'plane').setScale(1.0);
     plane.setOrigin(0.5, 0.5);
 
     //peoples = this.add.tileSprite(360, 950, 1000, 400, 'peoples').setScale(1.7);
-    peoples = this.add.tileSprite(360, 770, 1039, 616, 'peoples').setScale(1.7);
+    peoples = this.add.tileSprite(360, 750, 520, 308, 'peoples').setScale(3.5);
     peoples.setOrigin(0.5, 0.5);
     peoples.setDepth(1);
 
@@ -149,31 +149,36 @@ export class In_Game extends Phaser.Scene {
 
         if(power.scaleX >= 0.3){
 
-          console.log(power.scaleX);
+          //console.log(power.scaleX);
           if(userScore >= 0 && userScore < 30){
 
-            jumpPower = power.scaleX * 400;
-            player.body.gravity.y = -jumpPower * 60;
+            jumpPower = power.scaleX * 800;
+            //player.body.gravity.y = -jumpPower * 60;
+            player.setVelocityY(-jumpPower);
           }
           else if(userScore >= 30 && userScore < 60) {
 
-            jumpPower = power.scaleX * 400;
-            player.body.gravity.y = -jumpPower * 70;
+            jumpPower = power.scaleX * 700;
+            //player.body.gravity.y = -jumpPower * 70;
+            player.setVelocityY(-jumpPower);
           }
           else if(userScore >= 60 && userScore < 90) {
 
-            jumpPower = power.scaleX * 500;
-            player.body.gravity.y = -jumpPower * 60;
+            jumpPower = power.scaleX * 900;
+            //player.body.gravity.y = -jumpPower * 60;
+            player.setVelocityY(-jumpPower);
           }
           else if(userScore >= 90 && userScore < 120) {
 
-            jumpPower = power.scaleX * 400;
-            player.body.gravity.y = -jumpPower * 80;
+            jumpPower = power.scaleX * 850;
+            //player.body.gravity.y = -jumpPower * 80;
+            player.setVelocityY(-jumpPower);
           }
           else if(userScore >= 120) {
 
-            jumpPower = power.scaleX * 400;
-            player.body.gravity.y = -jumpPower * 85;
+            jumpPower = power.scaleX * 950;
+            //player.body.gravity.y = -jumpPower * 85;
+            player.setVelocityY(-jumpPower);
           }
 
           isJump = true;
@@ -181,7 +186,7 @@ export class In_Game extends Phaser.Scene {
 
           platformGroup.getChildren().forEach((item) => {
 
-            item.body.velocity.x = -jumpPower;
+            item.body.velocity.x = -jumpPower / 2;
           });
 
           jumpEvent = this.time.addEvent({
@@ -236,7 +241,7 @@ export class In_Game extends Phaser.Scene {
       //player.anims.pause()
       light_ornament.tilePositionX += 2;
       chinatown.tilePositionX += 0.5;
-      peoples.tilePositionX += 5;
+      peoples.tilePositionX += 2;
       platformGroup.getChildren().forEach((item) => {
 
         if(item.x < -20){
@@ -329,6 +334,7 @@ export class In_Game extends Phaser.Scene {
       totalPlatform = lastTotalPlatform;
 
       user.body.gravity.y = 0;
+      //console.log(user.body.gravity.y);
       platformGroup.getChildren().forEach((item) => {
 
         item.body.velocity.x = 0;
@@ -392,13 +398,13 @@ export class In_Game extends Phaser.Scene {
 
   addPlatform(posX){
 
-    if(posX < this.game.config.width * 200){
+    if(posX < this.game.config.width * 100){
 
       placedPlatform += 1;
       platform = this.physics.add.image(posX, Phaser.Math.Between(900, 1200), 'platform').setScale(0.6);
       platform.setImmovable();
       platform.setOrigin(0.5, 0.5);
-      platform.body.setAllowGravity(false);
+      //platform.body.setAllowGravity(false);
       nextPlatformPos = posX + Phaser.Math.Between(300, 400);
       platformGroup.add(platform);
 
@@ -425,8 +431,8 @@ export class In_Game extends Phaser.Scene {
 
   postDataOnFinish(finish, userSession){
 
-    //fetch("https://linipoin-api.macroad.co.id/api/v1.0/leaderboard/score/imlek_game/",{
-    fetch("https://linipoin-dev.macroad.co.id/api/v1.0/leaderboard/score/imlek_game/",{
+    fetch("https://linipoin-api.macroad.co.id/api/v1.0/leaderboard/score/imlek_game/",{
+    //fetch("https://linipoin-dev.macroad.co.id/api/v1.0/leaderboard/score/imlek_game/",{
 
       method:"PUT",
       headers: {
