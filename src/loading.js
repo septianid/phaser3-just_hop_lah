@@ -21,7 +21,6 @@ export class Loading extends Phaser.Scene{
     this.load.image('background_menu', './src/assets/background_menu.png');
     this.load.image('game_title', './src/assets/game_title.png');
     this.load.image('loading_title', './src/assets/loading_title.png');
-    this.load.image('ad_logo', './src/assets/ad_logo.png');
     this.load.image('logo', './src/assets/logo.png');
     this.load.image('close_button', './src/assets/close_button.png');
     this.load.image('play_button', './src/assets/play_button.png');
@@ -32,7 +31,8 @@ export class Loading extends Phaser.Scene{
     this.load.image('sound_off_button', './src/assets/sound_off_button.png');
     this.load.image('agree_button', './src/assets/agree_button.png');
     this.load.image('disagree_button', './src/assets/disagree_button.png');
-
+    this.load.image('next_button', './src/assets/next_button.png');
+    this.load.image('prev_button', './src/assets/previous_button.png');
     this.load.image('tnc_panel', './src/assets/tnc_panel.png');
     this.load.image('leaderboard_panel', './src/assets/leaderboard_panel.png');
     this.load.image('instruction_panel', './src/assets/instruction_panel.png');
@@ -40,31 +40,32 @@ export class Loading extends Phaser.Scene{
 
     this.load.image('confirm_5_poin_dialogbox', './src/assets/confirm_5_poin.png');
     this.load.image('confirm_10_poin_dialogbox', './src/assets/confirm_10_poin.png');
+    this.load.image('confirm_20_poin_dialogbox', './src/assets/confirm_20_poin.png');
+    this.load.image('confirm_50_poin_dialogbox', './src/assets/confirm_50_poin.png');
     this.load.image('confirm_100_poin_dialogbox', './src/assets/confirm_100_poin.png');
     this.load.image('confirm_200_poin_dialogbox', './src/assets/confirm_200_poin.png');
     this.load.image('no_poin_warn_dialogbox', './src/assets/no_poin_warn.png');
+    this.load.image('day_limit_warn_dialogbox', './src/assets/day_limit_warn.png');
     this.load.image('system_error', './src/assets/system_error.png');
+    this.load.image('email_verify', './src/assets/email_verify.png');
     this.load.image('life', './src/assets/lives.png');
 
-    this.load.image('plane', './src/assets/plane.png');
+    this.load.image('rail', './src/assets/rail.png');
+    this.load.image('train', './src/assets/train.png');
     this.load.image('platform', './src/assets/platform.png');
     this.load.image('powerbar', './src/assets/powerbar.png');
     this.load.image('background_game', './src/assets/background_game.png');
-    this.load.image('light_ornament', './src/assets/light_ornament.png');
     this.load.image('chinatown', './src/assets/chinatown.png');
     this.load.image('gameover_dialogbox', './src/assets/gameover.png');
     this.load.image('exit_button', './src/assets/exit_button.png');
-    this.load.image('peoples', './src/assets/people.png');
-    this.load.spritesheet('peoples_with_flag', './src/assets/people_with_flag.png', {
-
-      frameWidth: 1200,
-      frameHeight: 1200
-    });
-    this.load.spritesheet('player', './src/assets/player.png', {
-
-      frameWidth: 777,
-      frameHeight: 777,
-    });
+    this.load.image('road', './src/assets/road.png');
+    this.load.image('bush', './src/assets/bush.png');
+    // this.load.spritesheet('player', './src/assets/player.png', {
+    //
+    //   frameWidth: 777,
+    //   frameHeight: 777,
+    // });
+    this.load.image('player', './src/assets/player.png');
     this.load.spritesheet('tap_sign', "./src/assets/tap_to_start.png", {
       frameWidth: 974,
       frameHeight: 210
@@ -149,8 +150,8 @@ export class Loading extends Phaser.Scene{
   create(){
 
     var tapSign = this.add.sprite(360, 900, 'tap_sign').setScale(.6);
-    var ad = this.add.sprite(360, 1150, 'ad_logo').setScale(0.25)
-    ad.setOrigin(0.5, 0.5);
+    //var ad = this.add.sprite(360, 1150, 'ad_logo').setScale(0.25)
+    //ad.setOrigin(0.5, 0.5);
 
     this.anims.create({
       key: 'blink',

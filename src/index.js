@@ -26,7 +26,7 @@ window.onload = function(){
     },
     scene: [Loading, Menu, In_Game],
     audio:{
-      disableWebAudio:true,
+      disableWebAudio : true,
     }
   };
 

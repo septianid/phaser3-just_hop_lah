@@ -4,16 +4,14 @@ var player;
 var power;
 var platform;
 var background_game;
-var light_ornament;
-var chinatown;
-var peoples;
-var scoreBox;
-var plane;
 
-var powerTween;
+var chinatown;
+var bush;
+var scoreBox;
+var train;
+var rail;
 
 var platformGroup;
-var placedPlatform = 0;
 var nextPlatformPos;
 
 var userScore;
@@ -21,7 +19,6 @@ var scoreText;
 var platformDiff = 0;
 var lastTotalPlatform;
 var totalPlatform;
-var initTotalPlatform;
 
 var spawnPlane;
 var planeEvent;
@@ -33,6 +30,9 @@ var jumpTimer = 0;
 var isJump;
 var isDead;
 
+var respawnPlatform;
+var lastPlatform;
+
 var jumpSFX;
 var stepSFX;
 var deadSFX;
@@ -42,6 +42,11 @@ var sessionData;
 var idData;
 var scoreData;
 var soundState;
+
+window.onbeforeunload = () => {
+
+  return "Do you really want to leave our application?";
+}
 
 export class In_Game extends Phaser.Scene {
 
@@ -75,40 +80,43 @@ export class In_Game extends Phaser.Scene {
     //   repeat: -1
     // });
 
-    this.anims.create({
-      key: 'mouse',
-      frames: this.anims.generateFrameNames('player', {
-        start: 1,
-        end: 15
-      }),
-      frameRate: 20,
-      repeat: -1
-    });
+    // this.anims.create({
+    //   key: 'mouse',
+    //   frames: this.anims.generateFrameNames('player', {
+    //     start: 1,
+    //     end: 15
+    //   }),
+    //   frameRate: 20,
+    //   repeat: -1
+    // });
 
-    background_game = this.add.sprite(360, 640, 'background_game').setScale(0.32);
+    background_game = this.add.sprite(360, 640, 'background_game').setScale(0.7);
     background_game.setOrigin(0.5, 0.5);
 
-    light_ornament = this.add.tileSprite(360, 105, 500, 96, 'light_ornament').setScale(2.5);
-    light_ornament.setOrigin(0.5, 0.5);
+    // light_ornament = this.add.tileSprite(360, 105, 500, 96, 'light_ornament').setScale(2.5);
+    // light_ornament.setOrigin(0.5, 0.5);
 
-    chinatown = this.add.tileSprite(360, 850, 526, 118, 'chinatown').setScale(3.5);
+    chinatown = this.add.tileSprite(360, 750, 1052, 180, 'chinatown').setScale(2.8);
     chinatown.setOrigin(0.5, 0.5);
+
+    rail = this.add.tileSprite(360, 1000, 1920, 20, 'rail').setScale(0.5);
+    rail.setOrigin(0.5, 0.5);
 
     scoreBox = this.add.sprite(610, 80, 'score_box').setScale(.7);
     scoreBox.setOrigin(0.5, 0.5);
 
-    plane = this.add.sprite(-400, 350, 'plane').setScale(1.0);
-    plane.setOrigin(0.5, 0.5);
+    train = this.add.sprite(2000, 970, 'train').setScale(0.4);
+    train.setOrigin(0.5, 0.5);
 
-    //peoples = this.add.tileSprite(360, 950, 1000, 400, 'peoples').setScale(1.7);
-    peoples = this.add.tileSprite(360, 750, 520, 308, 'peoples').setScale(3.5);
-    peoples.setOrigin(0.5, 0.5);
-    peoples.setDepth(1);
+    //peoples = this.add.tileSprite(360, 950, 1152, 82, 'bush').setScale(1.7);
+    bush = this.add.tileSprite(360, 1200, 1152, 82, 'bush').setScale(2.3);
+    bush.setOrigin(0.5, 0.5);
+    bush.setDepth(1);
 
-    player = this.physics.add.sprite(100, 500, 'player').setScale(0.16);
+    player = this.physics.add.sprite(120, 520, 'player').setScale(0.06);
     player.setOrigin(0.5, 0.5);
-    player.setSize(250, 670);
-    player.setOffset(300, 10);
+    player.setSize(700, 1600);
+    player.setOffset(500, 500);
     player.body.gravity.y = 500;
 
     power = this.add.sprite(0, 0, 'powerbar');
@@ -152,25 +160,25 @@ export class In_Game extends Phaser.Scene {
           //console.log(power.scaleX);
           if(userScore >= 0 && userScore < 30){
 
-            jumpPower = power.scaleX * 800;
+            jumpPower = power.scaleX * 750;
             //player.body.gravity.y = -jumpPower * 60;
             player.setVelocityY(-jumpPower);
           }
           else if(userScore >= 30 && userScore < 60) {
 
-            jumpPower = power.scaleX * 700;
+            jumpPower = power.scaleX * 800;
             //player.body.gravity.y = -jumpPower * 70;
             player.setVelocityY(-jumpPower);
           }
           else if(userScore >= 60 && userScore < 90) {
 
-            jumpPower = power.scaleX * 900;
+            jumpPower = power.scaleX * 850;
             //player.body.gravity.y = -jumpPower * 60;
             player.setVelocityY(-jumpPower);
           }
           else if(userScore >= 90 && userScore < 120) {
 
-            jumpPower = power.scaleX * 850;
+            jumpPower = power.scaleX * 900;
             //player.body.gravity.y = -jumpPower * 80;
             player.setVelocityY(-jumpPower);
           }
@@ -217,34 +225,25 @@ export class In_Game extends Phaser.Scene {
 
   update(){
 
-    //plane.x += 5;
-    if(spawnPlane == true){
+    train.x -= 4;
+    if (train.x <= -720 * 2){
 
-      plane.x += 2;
-      if (plane.x >= 720 * 2){
-
-        console.log("Destroy");
-        plane.destroy();
-
-        // planeEvent = this.time.addEvent({
-        //
-        //   delay: 1,
-        //   repeat: 2,
-        //   callback: this.onSpawnPlane,
-        // })
-        spawnPlane = false;
-      }
+      //console.log("Destroy");
+      train.destroy();
+      //spawnPlane = false;
     }
 
     if(isJump == true){
 
       //player.anims.pause()
-      light_ornament.tilePositionX += 2;
+      //light_ornament.tilePositionX += 2;
       chinatown.tilePositionX += 0.5;
-      peoples.tilePositionX += 2;
+      bush.tilePositionX += 4;
+      rail.tilePositionX += 0.5;
+
       platformGroup.getChildren().forEach((item) => {
 
-        if(item.x < -20){
+        if(item.x < -10){
 
           item.destroy();
         }
@@ -260,6 +259,7 @@ export class In_Game extends Phaser.Scene {
       if(isDead == false){
 
         platformDiff = totalPlatform - platformGroup.getLength();
+        //console.log("Diff : "+platformDiff);
       }
       else {
 
@@ -267,10 +267,17 @@ export class In_Game extends Phaser.Scene {
       }
     }
 
+    // if(respawnPlatform == true){
+    //
+    //   //console.log("Spawn");
+    //   this.addPlatform(lastPlatform.x + Phaser.Math.Between(300, 400));
+    //   respawnPlatform = false;
+    // }
+
     if(isJump == false && this.game.input.activePointer.isDown){
 
-      power.x = player.x-50;
-      power.y = player.y-70
+      power.x = player.x-70;
+      power.y = player.y-90
       power.visible = true;
 
       power.scaleX += 0.02;
@@ -280,6 +287,7 @@ export class In_Game extends Phaser.Scene {
         power.scaleX = 1.0
       }
     }
+
   }
 
   onJump(){
@@ -299,7 +307,7 @@ export class In_Game extends Phaser.Scene {
 
     if(planeEvent.repeatCount == 0){
 
-      console.log("Spawn");
+      //console.log("Spawn");
       plane = this.add.sprite(-720, 350, 'plane').setScale(0.2);
       plane.setOrigin(0.5, 0.5);
       spawnPlane = true;
@@ -312,29 +320,31 @@ export class In_Game extends Phaser.Scene {
     if(user.body.touching.down){
 
       let date = new Date();
-
-      //let last = pole.getLast(true, true, 'platform');
-
       // console.log(lastTotalPlatform);
 
-      // if(lastTotalPlatform < initTotalPlatform){
-      //
-      //   this.addPlatform(last.x);
-      // }
-      user.anims.play('mouse', true);
+      //user.anims.play('mouse', true);
       stepSFX.play();
 
+      //console.log("Total : "+totalPlatform);
+
       lastTotalPlatform = platformGroup.getLength();
-      user.x = 100;
+      //console.log("Last Total : "+lastTotalPlatform);
+      user.x = 120;
 
       userScore = userScore + (platformDiff * scoreData);
       scoreText.text = "" +userScore;
 
+      // if(lastTotalPlatform < totalPlatform){
+      //
+      //   respawnPlatform = true;
+      //   lastPlatform = platformGroup.getLast(true);
+      // }
+
       platformDiff = 0;
+      //lastTotalPlatform = 0;
       totalPlatform = lastTotalPlatform;
 
       user.body.gravity.y = 0;
-      //console.log(user.body.gravity.y);
       platformGroup.getChildren().forEach((item) => {
 
         item.body.velocity.x = 0;
@@ -346,6 +356,8 @@ export class In_Game extends Phaser.Scene {
         time: date,
         score: userScore,
       })
+
+
     }
 
     else{
@@ -357,7 +369,7 @@ export class In_Game extends Phaser.Scene {
 
   gameOver(){
 
-    console.log('Dead');
+    //console.log('Dead');
     let endTime
     let lastScorePanel
     let exitButton
@@ -371,10 +383,10 @@ export class In_Game extends Phaser.Scene {
       item.body.velocity.x = 0;
     })
 
-    lastScorePanel = this.add.sprite(360, 640, 'gameover_dialogbox').setScale(.6);
+    lastScorePanel = this.add.sprite(360, 640, 'gameover_dialogbox').setScale(0.3);
     lastScorePanel.setOrigin(0.5, 0.5);
 
-    exitButton = this.add.sprite(360, 810, 'exit_button').setScale(0.15);
+    exitButton = this.add.sprite(360, 830, 'exit_button').setScale(0.15);
     exitButton.setOrigin(0.5, 0.5);
     exitButton.setInteractive();
 
@@ -387,6 +399,7 @@ export class In_Game extends Phaser.Scene {
 
     exitButton.on('pointerdown', () => {
 
+      userLog = [];
       this.scene.start("Menu");
       userLastScore.destroy();
       userScore = 0;
@@ -398,12 +411,13 @@ export class In_Game extends Phaser.Scene {
 
   addPlatform(posX){
 
-    if(posX < this.game.config.width * 100){
+    if(posX < this.game.config.width * 150){
 
-      placedPlatform += 1;
-      platform = this.physics.add.image(posX, Phaser.Math.Between(900, 1200), 'platform').setScale(0.6);
+      platform = this.physics.add.image(posX, Phaser.Math.Between(900, 1200), 'platform').setScale(0.45);
       platform.setImmovable();
       platform.setOrigin(0.5, 0.5);
+      platform.setSize(300, 1100);
+      platform.setOffset(0, 50)
       //platform.body.setAllowGravity(false);
       nextPlatformPos = posX + Phaser.Math.Between(300, 400);
       platformGroup.add(platform);
