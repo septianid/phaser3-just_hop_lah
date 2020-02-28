@@ -80,15 +80,25 @@ export class In_Game extends Phaser.Scene {
     //   repeat: -1
     // });
 
-    // this.anims.create({
-    //   key: 'mouse',
-    //   frames: this.anims.generateFrameNames('player', {
-    //     start: 1,
-    //     end: 15
-    //   }),
-    //   frameRate: 20,
-    //   repeat: -1
-    // });
+    this.anims.create({
+      key: 'player_idle',
+      frames: this.anims.generateFrameNames('player', {
+        start: 1,
+        end: 2
+      }),
+      frameRate: 5,
+      repeat: -1
+    });
+
+    this.anims.create({
+      key: 'player_jump',
+      frames: this.anims.generateFrameNames('player', {
+        start: 3,
+        end: 62
+      }),
+      frameRate: 10,
+      repeat: 0
+    })
 
     background_game = this.add.sprite(360, 640, 'background_game').setScale(0.7);
     background_game.setOrigin(0.5, 0.5);
@@ -99,7 +109,7 @@ export class In_Game extends Phaser.Scene {
     chinatown = this.add.tileSprite(360, 750, 1052, 180, 'chinatown').setScale(2.8);
     chinatown.setOrigin(0.5, 0.5);
 
-    rail = this.add.tileSprite(360, 1000, 1920, 20, 'rail').setScale(0.5);
+    rail = this.add.tileSprite(360, 1000, 1920, 20, 'rail').setScale(0.65);
     rail.setOrigin(0.5, 0.5);
 
     scoreBox = this.add.sprite(610, 80, 'score_box').setScale(.7);
@@ -113,10 +123,10 @@ export class In_Game extends Phaser.Scene {
     bush.setOrigin(0.5, 0.5);
     bush.setDepth(1);
 
-    player = this.physics.add.sprite(120, 520, 'player').setScale(0.06);
+    player = this.physics.add.sprite(120, 520, 'player').setScale(0.6);
     player.setOrigin(0.5, 0.5);
-    player.setSize(700, 1600);
-    player.setOffset(500, 500);
+    player.setSize(100, 200);
+    player.setOffset(70, 350);
     player.body.gravity.y = 500;
 
     power = this.add.sprite(0, 0, 'powerbar');
@@ -141,7 +151,7 @@ export class In_Game extends Phaser.Scene {
 
     this.physics.add.collider(player, platformGroup, this.checkLanding, null);
 
-    //peoples.anims.play('crowd', true);
+
 
     this.addPlatform(100);
     userScore = 0;
@@ -293,6 +303,7 @@ export class In_Game extends Phaser.Scene {
   onJump(){
 
     //console.log("Jump");
+    player.anims.play('player_jump', true);
     jumpTimer++;
 
     if(jumpTimer === 3){
@@ -322,7 +333,7 @@ export class In_Game extends Phaser.Scene {
       let date = new Date();
       // console.log(lastTotalPlatform);
 
-      //user.anims.play('mouse', true);
+      user.anims.play('player_idle', true);
       stepSFX.play();
 
       //console.log("Total : "+totalPlatform);
@@ -419,7 +430,7 @@ export class In_Game extends Phaser.Scene {
       platform.setSize(300, 1100);
       platform.setOffset(0, 50)
       //platform.body.setAllowGravity(false);
-      nextPlatformPos = posX + Phaser.Math.Between(300, 400);
+      nextPlatformPos = posX + Phaser.Math.Between(400, 500);
       platformGroup.add(platform);
 
       this.addPlatform(nextPlatformPos);

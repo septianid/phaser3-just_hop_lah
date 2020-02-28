@@ -60,12 +60,12 @@ export class Loading extends Phaser.Scene{
     this.load.image('exit_button', './src/assets/exit_button.png');
     this.load.image('road', './src/assets/road.png');
     this.load.image('bush', './src/assets/bush.png');
-    // this.load.spritesheet('player', './src/assets/player.png', {
-    //
-    //   frameWidth: 777,
-    //   frameHeight: 777,
-    // });
-    this.load.image('player', './src/assets/player.png');
+    this.load.spritesheet('player', './src/assets/player.png', {
+
+      frameWidth: 324,
+      frameHeight: 576,
+    });
+    //this.load.image('player', './src/assets/player.png');
     this.load.spritesheet('tap_sign', "./src/assets/tap_to_start.png", {
       frameWidth: 974,
       frameHeight: 210
