@@ -134,6 +134,7 @@ export class In_Game extends Phaser.Scene {
     power.scaleX = 0;
     power.scaleY = 1;
     power.visible = false;
+    //console.log(power);
 
     platformGroup = this.add.group();
 
@@ -286,8 +287,8 @@ export class In_Game extends Phaser.Scene {
 
     if(isJump == false && this.game.input.activePointer.isDown){
 
-      power.x = player.x-70;
-      power.y = player.y-90
+      power.x = player.x - 70;
+      power.y = player.y + 10;
       power.visible = true;
 
       power.scaleX += 0.02;
