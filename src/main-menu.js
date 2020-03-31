@@ -6,6 +6,7 @@ var leaderboardButton;
 var tncButton;
 var soundButton;
 var closeButton;
+var preload;
 
 var userPlayCount;
 var userStatus;
@@ -691,7 +692,28 @@ export class Menu extends Phaser.Scene {
     }
   }
 
+  preloadAnimation(yPos, size){
+
+    preload = this.add.sprite(360, yPos, 'preloader').setOrigin(0.5 ,0.5);
+    preload.setScale(size);
+    preload.setDepth(1);
+
+    this.anims.create({
+      key: 'loading',
+      frames: this.anims.generateFrameNumbers('preloader', {
+        start: 1,
+        end: 20
+      }),
+      frameRate: 20,
+      repeat: -1
+    });
+
+    preload.anims.play('loading', true);
+  }
+
   getDataOfUser(){
+
+    this.preloadAnimation(700, 0.5)
 
     fetch("https://linipoin-api.macroad.co.id/api/v1.0/leaderboard/check_user_limit/?lang=en&session="+userSession+"&linigame_platform_token=891ff5abb0c27161fb683bcaeb1d73accf1c9c5e", {
     //fetch("https://linipoin-dev.macroad.co.id/api/v1.0/leaderboard/check_user_limit/?lang=en&session="+userSession+"&linigame_platform_token=891ff5abb0c27161fb683bcaeb1d73accf1c9c5e", {
@@ -700,40 +722,39 @@ export class Menu extends Phaser.Scene {
 
     }).then(response => {
 
-      return response.json();
+      if(!response.ok){
+        return response.json().then(error => Promise.reject(error));
+      }
+      else {
+        return response.json();
+      }
+;
     }).then(data => {
 
-      if(data.response == 200){
+      if(data.result.isEmailVerif === false){
 
-        //console.log(data.result);
-        if(data.result.isEmailVerif === false){
-
-          let emailPanel = this.add.sprite(360, 640, 'email_verify').setScale(0.23);
-          emailPanel.setOrigin(0.5, 0.5);
-        }
-        else {
-
-          userPlayCount = data.result.play_count;
-          userStatus = data.result.blocked;
-          poinGame = data.result.gamePoin;
-          playLimit = data.result.lifePlay;
-          dailyLimit = data.result.isLimit;
-          liniPoin = data.result.userPoin;
-          this.activateMainButton();
-          this.drawLife();
-        }
-
+        let emailPanel = this.add.sprite(360, 640, 'email_verify').setScale(0.23);
+        emailPanel.setOrigin(0.5, 0.5);
+        preload.destroy()
       }
-
       else {
 
-        var errorPanel = this.add.sprite(360, 640, 'system_error').setScale(0.3);
-        errorPanel.setOrigin(0.5, 0.5);
+        userPlayCount = data.result.play_count;
+        userStatus = data.result.blocked;
+        poinGame = data.result.gamePoin;
+        playLimit = data.result.lifePlay;
+        dailyLimit = data.result.isLimit;
+        liniPoin = data.result.userPoin;
+        preload.destroy();
+        this.activateMainButton();
+        this.drawLife();
       }
 
     }).catch(error => {
 
-      console.log(error);;
+      var errorPanel = this.add.sprite(360, 640, 'system_error').setScale(0.3);
+      errorPanel.setOrigin(0.5, 0.5);
+      preload.destroy();
     });
   }
 
@@ -785,13 +806,20 @@ export class Menu extends Phaser.Scene {
 
   getLeaderboardList(startPos, startCumPos, idTextArr, scoreTextArr, cumIdTextArr, scoreCumTextArr, button){
 
+    this.preloadAnimation(640, 0.8);
+
     fetch("https://linipoin-api.macroad.co.id/api/v1.0/leaderboard/leaderboard_imlek?limit_highscore=5&limit_total_score=5&linigame_platform_token=891ff5abb0c27161fb683bcaeb1d73accf1c9c5e", {
     //fetch("https://linipoin-dev.macroad.co.id/api/v1.0/leaderboard/leaderboard_imlek?limit_highscore=5&limit_total_score=5&linigame_platform_token=891ff5abb0c27161fb683bcaeb1d73accf1c9c5e", {
 
       method: "GET",
     }).then(response => {
 
-      return response.json();
+      if(!response.ok){
+        return response.json().then(error => Promise.reject(error));
+      }
+      else {
+        return response.json();
+      }
 
     }).then(data => {
 
@@ -799,9 +827,10 @@ export class Menu extends Phaser.Scene {
       if(data.result.highscore_leaderboard.length >= 0 && data.result.totalscore_leaderboard.length >= 0){
 
         button.setInteractive();
+        preload.destroy();
       }
 
-      for(let i=0; i<data.result.highscore_leaderboard.length; i++){
+      for(let i=0; i < data.result.highscore_leaderboard.length; i++){
 
         let shortname1 = '';
         let name1 = data.result.highscore_leaderboard[i]["user.name"] !== null ? data.result.highscore_leaderboard[i]["user.name"]: 'No Name';
@@ -838,7 +867,7 @@ export class Menu extends Phaser.Scene {
         scoreTextArr[i].setOrigin(1, 0.5);
       }
 
-      for(let i=0; i<data.result.totalscore_leaderboard.length; i++){
+      for(let i=0; i < data.result.totalscore_leaderboard.length; i++){
 
         let shortname2 = '';
         let name2 = data.result.totalscore_leaderboard[i]["user.name"] !== null ? data.result.totalscore_leaderboard[i]["user.name"]: 'No Name';
@@ -878,7 +907,7 @@ export class Menu extends Phaser.Scene {
 
     }).catch(error => {
 
-      console.log(error);
+      console.log(error.result);
     });
   }
 

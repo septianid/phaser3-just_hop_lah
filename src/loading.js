@@ -70,6 +70,11 @@ export class Loading extends Phaser.Scene{
       frameWidth: 974,
       frameHeight: 210
     });
+    this.load.spritesheet('preloader', './src/assets/preloader.png', {
+
+      frameWidth: 128,
+      frameHeight: 128,
+    });
 
     this.load.audio('music_menu', "./src/assets/Audio/music.mp3");
     this.load.audio('jump', "./src/assets/Audio/jump.mp3");
