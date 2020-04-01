@@ -694,13 +694,13 @@ export class Menu extends Phaser.Scene {
 
   preloadAnimation(yPos, size){
 
-    preload = this.add.sprite(360, yPos, 'preloader').setOrigin(0.5 ,0.5);
+    preload = this.add.sprite(360, yPos, 'preloader_menu').setOrigin(0.5 ,0.5);
     preload.setScale(size);
     preload.setDepth(1);
 
     this.anims.create({
-      key: 'loading',
-      frames: this.anims.generateFrameNumbers('preloader', {
+      key: 'loading_menu',
+      frames: this.anims.generateFrameNumbers('preloader_menu', {
         start: 1,
         end: 20
       }),
@@ -708,15 +708,15 @@ export class Menu extends Phaser.Scene {
       repeat: -1
     });
 
-    preload.anims.play('loading', true);
+    preload.anims.play('loading_menu', true);
   }
 
   getDataOfUser(){
 
     this.preloadAnimation(700, 0.5)
 
-    fetch("https://linipoin-api.macroad.co.id/api/v1.0/leaderboard/check_user_limit/?lang=en&session="+userSession+"&linigame_platform_token=891ff5abb0c27161fb683bcaeb1d73accf1c9c5e", {
-    //fetch("https://linipoin-dev.macroad.co.id/api/v1.0/leaderboard/check_user_limit/?lang=en&session="+userSession+"&linigame_platform_token=891ff5abb0c27161fb683bcaeb1d73accf1c9c5e", {
+    //fetch("https://linipoin-api.macroad.co.id/api/v1.0/leaderboard/check_user_limit/?lang=en&session="+userSession+"&linigame_platform_token=891ff5abb0c27161fb683bcaeb1d73accf1c9c5e", {
+    fetch("https://linipoin-dev.macroad.co.id/api/v1.0/leaderboard/check_user_limit/?lang=en&session="+userSession+"&linigame_platform_token=891ff5abb0c27161fb683bcaeb1d73accf1c9c5e", {
 
       method:"GET",
 
@@ -762,8 +762,8 @@ export class Menu extends Phaser.Scene {
 
     let dataID;
 
-    fetch("https://linipoin-api.macroad.co.id/api/v1.0/leaderboard/imlek_game/",{
-    //fetch("https://linipoin-dev.macroad.co.id/api/v1.0/leaderboard/imlek_game/",{
+    //fetch("https://linipoin-api.macroad.co.id/api/v1.0/leaderboard/imlek_game/",{
+    fetch("https://linipoin-dev.macroad.co.id/api/v1.0/leaderboard/imlek_game/",{
 
       method:"POST",
       headers: {
@@ -778,7 +778,15 @@ export class Menu extends Phaser.Scene {
         user_highscore: 0,
         total_score: 0,
       }),
-    }).then(response => response.json()).then(res => {
+    }).then(response => {
+
+      if(!response.ok){
+        return response.json().then(error => Promise.reject(error));
+      }
+      else {
+        return response.json();
+      }
+    }).then(res => {
 
       dataID = res.result.id;
       if(res.response == 200){
@@ -806,10 +814,10 @@ export class Menu extends Phaser.Scene {
 
   getLeaderboardList(startPos, startCumPos, idTextArr, scoreTextArr, cumIdTextArr, scoreCumTextArr, button){
 
-    this.preloadAnimation(640, 0.8);
+    this.preloadAnimation(690, 0.8);
 
-    fetch("https://linipoin-api.macroad.co.id/api/v1.0/leaderboard/leaderboard_imlek?limit_highscore=5&limit_total_score=5&linigame_platform_token=891ff5abb0c27161fb683bcaeb1d73accf1c9c5e", {
-    //fetch("https://linipoin-dev.macroad.co.id/api/v1.0/leaderboard/leaderboard_imlek?limit_highscore=5&limit_total_score=5&linigame_platform_token=891ff5abb0c27161fb683bcaeb1d73accf1c9c5e", {
+    //fetch("https://linipoin-api.macroad.co.id/api/v1.0/leaderboard/leaderboard_imlek?limit_highscore=5&limit_total_score=5&linigame_platform_token=891ff5abb0c27161fb683bcaeb1d73accf1c9c5e", {
+    fetch("https://linipoin-dev.macroad.co.id/api/v1.0/leaderboard/leaderboard_imlek?limit_highscore=5&limit_total_score=5&linigame_platform_token=891ff5abb0c27161fb683bcaeb1d73accf1c9c5e", {
 
       method: "GET",
     }).then(response => {
@@ -913,8 +921,8 @@ export class Menu extends Phaser.Scene {
 
   getUserRank(button){
 
-    fetch("https://linipoin-api.macroad.co.id/api/v1.0/leaderboard/get_user_rank_imlek/?session="+userSession+"&linigame_platform_token=891ff5abb0c27161fb683bcaeb1d73accf1c9c5e&limit=5", {
-    //fetch("https://linipoin-dev.macroad.co.id/api/v1.0/leaderboard/get_user_rank_imlek/?session="+userSession+"&linigame_platform_token=891ff5abb0c27161fb683bcaeb1d73accf1c9c5e&limit=5", {
+    //fetch("https://linipoin-api.macroad.co.id/api/v1.0/leaderboard/get_user_rank_imlek/?session="+userSession+"&linigame_platform_token=891ff5abb0c27161fb683bcaeb1d73accf1c9c5e&limit=5", {
+    fetch("https://linipoin-dev.macroad.co.id/api/v1.0/leaderboard/get_user_rank_imlek/?session="+userSession+"&linigame_platform_token=891ff5abb0c27161fb683bcaeb1d73accf1c9c5e&limit=5", {
 
       method:"GET",
     }).then(response => {

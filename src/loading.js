@@ -70,7 +70,12 @@ export class Loading extends Phaser.Scene{
       frameWidth: 974,
       frameHeight: 210
     });
-    this.load.spritesheet('preloader', './src/assets/preloader.png', {
+    this.load.spritesheet('preloader_menu', './src/assets/preloader_menu.png', {
+
+      frameWidth: 128,
+      frameHeight: 128,
+    });
+    this.load.spritesheet('preloader_game', './src/assets/preloader_game.png', {
 
       frameWidth: 128,
       frameHeight: 128,

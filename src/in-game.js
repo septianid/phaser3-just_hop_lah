@@ -70,16 +70,6 @@ export class In_Game extends Phaser.Scene {
 
   create(){
 
-    // this.anims.create({
-    //   key: 'crowd',
-    //   frames: this.anims.generateFrameNumbers('peoples_with_flag', {
-    //     start: 0,
-    //     end: 3
-    //   }),
-    //   frameRate: 10,
-    //   repeat: -1
-    // });
-
     this.anims.create({
       key: 'player_idle',
       frames: this.anims.generateFrameNames('player', {
@@ -457,8 +447,24 @@ export class In_Game extends Phaser.Scene {
 
   postDataOnFinish(finish, userSession){
 
-    fetch("https://linipoin-api.macroad.co.id/api/v1.0/leaderboard/score/imlek_game/",{
-    //fetch("https://linipoin-dev.macroad.co.id/api/v1.0/leaderboard/score/imlek_game/",{
+    let preload = this.add.sprite(360, 710, 'preloader_game').setOrigin(0.5 ,0.5);
+    preload.setScale(0.5);
+    preload.setDepth(1);
+
+    this.anims.create({
+      key: 'loading_highscore',
+      frames: this.anims.generateFrameNumbers('preloader_game', {
+        start: 1,
+        end: 8
+      }),
+      frameRate: 8,
+      repeat: -1
+    });
+
+    preload.anims.play('loading_highscore', true);
+
+    //fetch("https://linipoin-api.macroad.co.id/api/v1.0/leaderboard/score/imlek_game/",{
+    fetch("https://linipoin-dev.macroad.co.id/api/v1.0/leaderboard/score/imlek_game/",{
 
       method:"PUT",
       headers: {
@@ -474,7 +480,17 @@ export class In_Game extends Phaser.Scene {
         id: idData,
         log: userLog,
       }),
-    }).then(response => response.json()).then(res => {
+    }).then(response => {
+
+      if(!response.ok){
+        return response.json().then(error => Promise.reject(error));
+      }
+      else {
+        return response.json();
+      }
+    }).then(res => {
+
+      preload.destroy();
 
       let userHighScore = this.add.text(360, 710, ''+res.result.user_highscore, {
         font: 'bold 62px Arial',
