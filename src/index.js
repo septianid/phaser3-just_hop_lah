@@ -9,6 +9,9 @@ window.onload = function(){
 
     type: Phaser.CANVAS,
     parent: 'game',
+    dom: {
+      createContainer: true
+    },
     physics:{
       default: 'arcade',
       arcade:{

@@ -48,6 +48,8 @@ window.onbeforeunload = () => {
   return "Do you really want to leave our application?";
 }
 
+var CryptoJS = require('crypto-js')
+
 export class In_Game extends Phaser.Scene {
 
   constructor(){
@@ -240,7 +242,7 @@ export class In_Game extends Phaser.Scene {
       //light_ornament.tilePositionX += 2;
       chinatown.tilePositionX += 0.5;
       bush.tilePositionX += 4;
-      rail.tilePositionX += 0.5;
+      rail.tilePositionX += 3;
 
       platformGroup.getChildren().forEach((item) => {
 
@@ -447,9 +449,21 @@ export class In_Game extends Phaser.Scene {
 
   postDataOnFinish(finish, userSession){
 
-    let preload = this.add.sprite(360, 710, 'preloader_game').setOrigin(0.5 ,0.5);
+    let preload = this.add.sprite(360, 720, 'preloader_game').setOrigin(0.5 ,0.5);
     preload.setScale(0.5);
     preload.setDepth(1);
+
+    let final = {
+
+      datas: CryptoJS.AES.encrypt(JSON.stringify({
+        session: userSession,
+        linigame_platform_token: "891ff5abb0c27161fb683bcaeb1d73accf1c9c5e",
+        game_end: finish,
+        score: userScore,
+        id: idData,
+        log: userLog,
+      }), 'c0dif!#l1n!9am#enCr!pto9r4pH!*').toString()
+    }
 
     this.anims.create({
       key: 'loading_highscore',
@@ -465,21 +479,14 @@ export class In_Game extends Phaser.Scene {
 
     //fetch("https://linipoin-api.macroad.co.id/api/v1.0/leaderboard/score/imlek_game/",{
     fetch("https://linipoin-dev.macroad.co.id/api/v1.0/leaderboard/score/imlek_game/",{
+    //fetch("https://171b3c36.ngrok.io/api/v1.0/leaderboard/score/imlek_game/",{
 
       method:"PUT",
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({
-
-        session: userSession,
-        linigame_platform_token: "891ff5abb0c27161fb683bcaeb1d73accf1c9c5e",
-        game_end: finish,
-        score: userScore,
-        id: idData,
-        log: userLog,
-      }),
+      body: JSON.stringify(final),
     }).then(response => {
 
       if(!response.ok){
@@ -492,7 +499,7 @@ export class In_Game extends Phaser.Scene {
 
       preload.destroy();
 
-      let userHighScore = this.add.text(360, 710, ''+res.result.user_highscore, {
+      let userHighScore = this.add.text(360, 720, ''+res.result.user_highscore, {
         font: 'bold 62px Arial',
         fill: 'white',
         align: 'center'
@@ -502,7 +509,7 @@ export class In_Game extends Phaser.Scene {
 
     }).catch(error => {
 
-      console.log(error);
+      //console.log(error);
     });
   }
 }

@@ -3,7 +3,6 @@ import Phaser from "phaser";
 var progressBar;
 var progressBox;
 var background_loading;
-var title_loading;
 var tapSign;
 
 export class Loading extends Phaser.Scene{
@@ -11,16 +10,22 @@ export class Loading extends Phaser.Scene{
   constructor(){
     super({
       key: 'Loading',
+      pack: {
+        files: [
+          // { type: 'image', key: 'background_loading', url: 'src/assets/background-loading.png'},
+          { type: 'image', key: 'loading_title', url: './src/assets/loading_title.png'}
+        ]
+      }
     });
   }
 
   preload(){
     //this.load.image('loading-background', "./src/assets/background-loading.jpg");
     this.cameras.main.setBackgroundColor('#890720');
-
+    this.add.sprite(370, 350, 'loading_title').setScale(.7);
     this.load.image('background_menu', './src/assets/background_menu.png');
     this.load.image('game_title', './src/assets/game_title.png');
-    this.load.image('loading_title', './src/assets/loading_title.png');
+    //this.load.image('loading_title', './src/assets/loading_title.png');
     this.load.image('logo', './src/assets/logo.png');
     this.load.image('close_button', './src/assets/close_button.png');
     this.load.image('play_button', './src/assets/play_button.png');
@@ -36,8 +41,11 @@ export class Loading extends Phaser.Scene{
     this.load.image('tnc_panel', './src/assets/tnc_panel.png');
     this.load.image('leaderboard_panel', './src/assets/leaderboard_panel.png');
     this.load.image('instruction_panel', './src/assets/instruction_panel.png');
+    this.load.image('ad_loading_panel', './src/assets/ad_loading_panel.png');
     this.load.image('score_box', './src/assets/score_box.png');
 
+    this.load.image('pay_10_button', './src/assets/pay_10_button.png');
+    this.load.image('watch_ad_button', './src/assets/watch_ad_button.png');
     this.load.image('confirm_5_poin_dialogbox', './src/assets/confirm_5_poin.png');
     this.load.image('confirm_10_poin_dialogbox', './src/assets/confirm_10_poin.png');
     this.load.image('confirm_20_poin_dialogbox', './src/assets/confirm_20_poin.png');
@@ -147,9 +155,6 @@ export class Loading extends Phaser.Scene{
       progressBox.setDepth(1);
       progressBar.fillStyle(0xffffff, 1)
       progressBar.fillRect(210, 650, 300, 30).setDepth(1);
-
-      var title_loading = this.add.sprite(370, 350, 'loading_title').setScale(.7);
-      title_loading.setOrigin(0.5, 0.5);
 
       // this.sound.on('decoded',  ()=> {
       //   console.log('AUDIO BERHASIL DI LOAD CUX');
