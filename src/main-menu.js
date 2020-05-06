@@ -11,12 +11,13 @@ var closeButton;
 var preload;
 var listButton = []
 
-var userPlayCount;
-var userStatus;
-var poinGame;
-var playLimit;
-var dailyLimit;
-var liniPoin;
+// var userPlayCount;
+// var userStatus;
+// var poinGame;
+// var playLimit;
+// var dailyLimit;
+// var liniPoin;
+var championData = {}
 var userEmail;
 var userDOB;
 var userGender;
@@ -117,7 +118,6 @@ export class Menu extends Phaser.Scene {
 
   }
 
-
   activateMainButton(buttonList){
 
     buttonList.forEach(button => {
@@ -136,7 +136,7 @@ export class Menu extends Phaser.Scene {
 
     soundClick.play();
 
-    if(userStatus == true){
+    if(championData.isHeWorth == true){
 
       this.showWarningBox('day_limit_warn_dialogbox', 0.3);
     }
@@ -154,9 +154,9 @@ export class Menu extends Phaser.Scene {
 
     let startPos = 290;
 
-    if(playLimit != 0){
+    if(championData.freeWarmingUp != 0){
 
-      for(let i = 1; i <= playLimit; i++){
+      for(let i = 1; i <= championData.freeWarmingUp; i++){
 
         if(i == 1){
 
@@ -178,7 +178,7 @@ export class Menu extends Phaser.Scene {
 
     else {
 
-      if (userStatus === false) {
+      if (championData.isHeWorth === false) {
 
         this.showPayOption(10);
       }
@@ -192,7 +192,7 @@ export class Menu extends Phaser.Scene {
     //payPoinButton.setInteractive();
     payPoinButton.on('pointerdown', () => {
 
-      if (liniPoin < poinRequired) {
+      if (championData.goldPouch < poinRequired) {
         this.showWarningBox('no_poin_warn_dialogbox', 0.3);
       }
       else {
@@ -685,7 +685,7 @@ export class Menu extends Phaser.Scene {
 
   getDataOfUser(){
 
-    this.preloadAnimation(360, 650, 0.8, 20, 'preloader_menu')
+    this.preloadAnimation(360, 580, 0.8, 20, 'preloader_menu')
 
     let final = {
 
@@ -694,9 +694,10 @@ export class Menu extends Phaser.Scene {
         linigame_platform_token: '891ff5abb0c27161fb683bcaeb1d73accf1c9c5e'
       }), 'c0dif!#l1n!9am#enCr!pto9r4pH!*').toString()
     }
+
     //fetch("https://linipoin-api.macroad.co.id/api/v1.0/leaderboard/check_user_limit/", {
     fetch("https://linipoin-dev.macroad.co.id/api/v1.0/leaderboard/check_user_limit/", {
-    //fetch("https://171b3c36.ngrok.io/api/v1.0/leaderboard/check_user_limit/", {
+    //fetch("https://9a94bd0b.ngrok.io/api/v1.0/leaderboard/check_user_limit/", {
 
       method:"POST",
       headers: {
@@ -719,6 +720,16 @@ export class Menu extends Phaser.Scene {
       //console.log(data.result);
 
       let phoneNumber = data.result.phone_number;
+      userPhone = '0' + phoneNumber.substring(3);
+      userEmail = data.result.email;
+      userDOB = data.result.dob;
+
+      if(data.result.gender === 'm'){
+        userGender = 'male'
+      }
+      else {
+        userGender = 'female'
+      }
 
       if(data.result.isEmailVerif === false){
 
@@ -728,22 +739,18 @@ export class Menu extends Phaser.Scene {
       }
       else {
 
-        userPlayCount = data.result.play_count;
-        userStatus = data.result.blocked;
-        poinGame = data.result.gamePoin;
-        playLimit = data.result.lifePlay;
-        dailyLimit = data.result.isLimit;
-        liniPoin = data.result.userPoin;
-        userEmail = data.result.email;
-        userDOB = data.result.dob;
-        userPhone = '0' + phoneNumber.substring(3);
+        championData.canDoThisAllDay = data.result.play_count
+        championData.stageRule = data.result.gamePoin
+        championData.isHeWorth = data.result.blocked
+        championData.freeWarmingUp = data.result.lifePlay
+        championData.goldPouch = data.result.userPoin
+        //userPlayCount = data.result.play_count;
+        //userStatus = data.result.blocked
+        //poinGame = data.result.gamePoin;
+        //playLimit = data.result.lifePlay;
+        //dailyLimit = data.result.isLimit;
+        //liniPoin = data.result.userPoin;
 
-        if(data.result.gender === 'm'){
-          userGender = 'male'
-        }
-        else {
-          userGender = 'female'
-        }
 
         preload.destroy();
         this.drawLife();
@@ -770,6 +777,7 @@ export class Menu extends Phaser.Scene {
   postDataOnStart(start, sessionUser, isWatchAd){
 
     let dataID;
+    let requestID = CryptoJS.AES.encrypt('LG'+'+891ff5abb0c27161fb683bcaeb1d73accf1c9c5e+'+Date.now(), 'c0dif!#l1n!9am#enCr!pto9r4pH!*').toString()
     let final
     let data = {
       linigame_platform_token: '891ff5abb0c27161fb683bcaeb1d73accf1c9c5e',
@@ -795,12 +803,13 @@ export class Menu extends Phaser.Scene {
 
     //fetch("https://linipoin-api.macroad.co.id/api/v1.0/leaderboard/imlek_game/",{
     fetch("https://linipoin-dev.macroad.co.id/api/v1.0/leaderboard/imlek_game/",{
-    //fetch("https://171b3c36.ngrok.io/api/v1.0/leaderboard/imlek_game/",{
+    //fetch("https://9a94bd0b.ngrok.io/api/v1.0/leaderboard/imlek_game/",{
 
       method:"POST",
       headers: {
         'Accept': 'application/json',
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'request-id': requestID
       },
       body: JSON.stringify(final),
     }).then(response => {
@@ -819,7 +828,7 @@ export class Menu extends Phaser.Scene {
         this.scene.start("PlayGame", {
           session: sessionUser,
           id: dataID,
-          score: poinGame,
+          score: championData.stageRule,
           soundStatus: musicStatus,
         });
       }
@@ -1030,7 +1039,7 @@ export class Menu extends Phaser.Scene {
 
     this.deactivateMainButton(listButton);
 
-    //fetch('https://captive-api.macroad.co.id/api/v2/linigames/advertisement?email='+userEmail+'&dob='+userDOB+'&gender='+userGender+'&phone_number='+userPhone, {
+    //fetch('https://captive.macroad.co.id/api/v2/linigames/advertisement?email='+userEmail+'&dob='+userDOB+'&gender='+userGender+'&phone_number='+userPhone, {
     fetch('https://captive-dev.macroad.co.id/api/v2/linigames/advertisement?email='+userEmail+'&dob='+userDOB+'&gender='+userGender+'&phone_number='+userPhone, {
 
       method: "GET",
@@ -1106,7 +1115,7 @@ export class Menu extends Phaser.Scene {
 
   getConnectionStatus(){
 
-    //fetch('https://captive-api.macroad.co.id/api/v2/linigames/advertisement/connect/53?email='+userEmail+'&dob='+userDOB+'&gender='+userGender+'&phone_number='+userPhone, {
+    //fetch('https://captive.macroad.co.id/api/v2/linigames/advertisement/connect/53?email='+userEmail+'&dob='+userDOB+'&gender='+userGender+'&phone_number='+userPhone, {
     fetch('https://captive-dev.macroad.co.id/api/v2/linigames/advertisement/connect/53?email='+userEmail+'&dob='+userDOB+'&gender='+userGender+'&phone_number='+userPhone, {
 
       method: 'GET',

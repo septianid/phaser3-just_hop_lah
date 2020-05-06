@@ -453,6 +453,7 @@ export class In_Game extends Phaser.Scene {
     preload.setScale(0.5);
     preload.setDepth(1);
 
+    let requestID = CryptoJS.AES.encrypt('LG'+'+891ff5abb0c27161fb683bcaeb1d73accf1c9c5e+'+Date.now(), 'c0dif!#l1n!9am#enCr!pto9r4pH!*').toString()
     let final = {
 
       datas: CryptoJS.AES.encrypt(JSON.stringify({
@@ -479,12 +480,13 @@ export class In_Game extends Phaser.Scene {
 
     //fetch("https://linipoin-api.macroad.co.id/api/v1.0/leaderboard/score/imlek_game/",{
     fetch("https://linipoin-dev.macroad.co.id/api/v1.0/leaderboard/score/imlek_game/",{
-    //fetch("https://171b3c36.ngrok.io/api/v1.0/leaderboard/score/imlek_game/",{
+    //fetch("https://9a94bd0b.ngrok.io/api/v1.0/leaderboard/score/imlek_game/",{
 
       method:"PUT",
       headers: {
         'Accept': 'application/json',
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'request-id': requestID
       },
       body: JSON.stringify(final),
     }).then(response => {
