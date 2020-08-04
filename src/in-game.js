@@ -16,7 +16,7 @@ var nextPlatformPos;
 
 var userScore;
 var scoreText;
-var platformDiff = 0;
+var platformDiff;
 var lastTotalPlatform;
 var totalPlatform;
 
@@ -26,7 +26,7 @@ var waitToSpawn;
 
 var jumpPower;
 var jumpEvent;
-var jumpTimer = 0;
+var jumpTimer;
 var isJump;
 var isDead;
 
@@ -38,10 +38,12 @@ var stepSFX;
 var deadSFX;
 
 var userLog = [];
-var sessionData;
-var idData;
-var scoreData;
-var soundState;
+var initData = {}
+// var sessionData;
+// var idData;
+// var scoreData;
+// var soundState;
+// var apiUrl;
 
 window.onbeforeunload = () => {
 
@@ -59,10 +61,12 @@ export class In_Game extends Phaser.Scene {
 
   init(gameData){
 
-    sessionData = gameData.session;
-    idData = gameData.id;
-    scoreData = gameData.score;
-    soundState = gameData.soundStatus;
+    initData.sessionData = gameData.session;
+    initData.idData = gameData.id;
+    initData.scoreData = gameData.score;
+    initData.soundState = gameData.soundStatus;
+    initData.urlData = gameData.apiUrl;
+    initData.gameToken = gameData.token
   }
 
   preload(){
@@ -91,6 +95,9 @@ export class In_Game extends Phaser.Scene {
       frameRate: 10,
       repeat: 0
     })
+
+    jumpTimer = 0;
+    platformDiff = 0;
 
     background_game = this.add.sprite(360, 640, 'background_game').setScale(0.7);
     background_game.setOrigin(0.5, 0.5);
@@ -295,12 +302,10 @@ export class In_Game extends Phaser.Scene {
 
   onJump(){
 
-    //console.log("Jump");
     player.anims.play('player_jump', true);
     jumpTimer++;
 
     if(jumpTimer === 3){
-
       player.body.gravity.y = 1000;
       jumpTimer = 0;
       jumpEvent.remove(false);
@@ -335,7 +340,7 @@ export class In_Game extends Phaser.Scene {
       //console.log("Last Total : "+lastTotalPlatform);
       user.x = 120;
 
-      userScore = userScore + (platformDiff * scoreData);
+      userScore = userScore + (platformDiff * initData.scoreData);
       scoreText.text = "" +userScore;
 
       // if(lastTotalPlatform < totalPlatform){
@@ -366,7 +371,7 @@ export class In_Game extends Phaser.Scene {
 
     else{
 
-      userScore = userScore + (0 * scoreData);
+      userScore = userScore + (0 * initData.scoreData);
     }
 
   }
@@ -409,7 +414,7 @@ export class In_Game extends Phaser.Scene {
       userScore = 0;
     })
 
-    this.postDataOnFinish(endTime, sessionData);
+    this.postDataOnFinish(endTime, initData.sessionData);
     isJump = false;
   }
 
@@ -453,15 +458,15 @@ export class In_Game extends Phaser.Scene {
     preload.setScale(0.5);
     preload.setDepth(1);
 
-    let requestID = CryptoJS.AES.encrypt('LG'+'+891ff5abb0c27161fb683bcaeb1d73accf1c9c5e+'+Date.now(), 'c0dif!#l1n!9am#enCr!pto9r4pH!*').toString()
+    let requestID = CryptoJS.AES.encrypt('LG'+'+'+initData.gameToken+'+'+Date.now(), 'c0dif!#l1n!9am#enCr!pto9r4pH!*').toString()
     let final = {
 
       datas: CryptoJS.AES.encrypt(JSON.stringify({
         session: userSession,
-        linigame_platform_token: "891ff5abb0c27161fb683bcaeb1d73accf1c9c5e",
+        linigame_platform_token: initData.gameToken,
         game_end: finish,
         score: userScore,
-        id: idData,
+        id: initData.idData,
         log: userLog,
       }), 'c0dif!#l1n!9am#enCr!pto9r4pH!*').toString()
     }
@@ -478,9 +483,7 @@ export class In_Game extends Phaser.Scene {
 
     preload.anims.play('loading_highscore', true);
 
-    //fetch("https://linipoin-api.macroad.co.id/api/v1.0/leaderboard/score/imlek_game/",{
-    fetch("https://linipoin-dev.macroad.co.id/api/v1.0/leaderboard/score/imlek_game/",{
-    //fetch("https://9a94bd0b.ngrok.io/api/v1.0/leaderboard/score/imlek_game/",{
+    fetch(initData.urlData+"api/v1.0/leaderboard/score/imlek_game/",{
 
       method:"PUT",
       headers: {

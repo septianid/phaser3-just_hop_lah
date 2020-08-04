@@ -11,18 +11,6 @@ var closeButton;
 var preload;
 var listButton = []
 
-// var userPlayCount;
-// var userStatus;
-// var poinGame;
-// var playLimit;
-// var dailyLimit;
-// var liniPoin;
-var championData = {}
-var userEmail;
-var userDOB;
-var userGender;
-var userPhone;
-
 var videoTimer;
 var advideoTimer;
 var videoTimerText;
@@ -37,6 +25,10 @@ var musicStatus;
 var bgSound;
 var soundClick;
 var closeClick;
+
+var gameToken;
+var urlData = {}
+var championData = {}
 
 var urlParams = new URLSearchParams(window.location.search);
 var userSession = urlParams.get('session');
@@ -56,6 +48,22 @@ export class Menu extends Phaser.Scene {
   }
 
   create(){
+
+    // urlData = {
+    //   apiLP_URL: 'https://linipoin-api.macroad.co.id/',    //// PRODUCTION
+    //   apiCPV_URL: 'https://captive.macroad.co.id/',
+    // }
+    //
+    urlData = {
+      apiLP_URL: 'https://linipoin-dev.macroad.co.id/',    //// DEVELOPMENT
+      apiCPV_URL: 'https://captive-dev.macroad.co.id/',
+    }
+
+    // urlData = {
+    //   apiLP_URL: 'https://7f41949f7b4a.ngrok.io/',             //// DEVELOPMENT-LOCAL
+    //   apiCPV_URL: 'https://captive-dev.macroad.co.id/',
+    // }
+    gameToken = '891ff5abb0c27161fb683bcaeb1d73accf1c9c5e'
 
     this.getDataOfUser();
 
@@ -691,13 +699,11 @@ export class Menu extends Phaser.Scene {
 
       datas: CryptoJS.AES.encrypt(JSON.stringify({
         session: userSession,
-        linigame_platform_token: '891ff5abb0c27161fb683bcaeb1d73accf1c9c5e'
+        linigame_platform_token: gameToken
       }), 'c0dif!#l1n!9am#enCr!pto9r4pH!*').toString()
     }
 
-    //fetch("https://linipoin-api.macroad.co.id/api/v1.0/leaderboard/check_user_limit/", {
-    fetch("https://linipoin-dev.macroad.co.id/api/v1.0/leaderboard/check_user_limit/", {
-    //fetch("https://9a94bd0b.ngrok.io/api/v1.0/leaderboard/check_user_limit/", {
+    fetch(urlData.apiLP_URL+"api/v1.0/leaderboard/check_user_limit/", {
 
       method:"POST",
       headers: {
@@ -720,15 +726,15 @@ export class Menu extends Phaser.Scene {
       //console.log(data.result);
 
       let phoneNumber = data.result.phone_number;
-      userPhone = '0' + phoneNumber.substring(3);
-      userEmail = data.result.email;
-      userDOB = data.result.dob;
+      championData.userPhone = '0' + phoneNumber.substring(3);
+      championData.userEmail = data.result.email;
+      championData.userDOB = data.result.dob;
 
       if(data.result.gender === 'm'){
-        userGender = 'male'
+        championData.userGender = 'male'
       }
       else {
-        userGender = 'female'
+        championData.userGender = 'female'
       }
 
       if(data.result.isEmailVerif === false){
@@ -777,10 +783,10 @@ export class Menu extends Phaser.Scene {
   postDataOnStart(start, sessionUser, isWatchAd){
 
     let dataID;
-    let requestID = CryptoJS.AES.encrypt('LG'+'+891ff5abb0c27161fb683bcaeb1d73accf1c9c5e+'+Date.now(), 'c0dif!#l1n!9am#enCr!pto9r4pH!*').toString()
+    let requestID = CryptoJS.AES.encrypt('LG'+'+'+gameToken+'+'+Date.now(), 'c0dif!#l1n!9am#enCr!pto9r4pH!*').toString()
     let final
     let data = {
-      linigame_platform_token: '891ff5abb0c27161fb683bcaeb1d73accf1c9c5e',
+      linigame_platform_token: gameToken,
       session: sessionUser,
       game_start: start,
       score: 0,
@@ -801,9 +807,7 @@ export class Menu extends Phaser.Scene {
       }
     }
 
-    //fetch("https://linipoin-api.macroad.co.id/api/v1.0/leaderboard/imlek_game/",{
-    fetch("https://linipoin-dev.macroad.co.id/api/v1.0/leaderboard/imlek_game/",{
-    //fetch("https://9a94bd0b.ngrok.io/api/v1.0/leaderboard/imlek_game/",{
+    fetch(urlData.apiLP_URL+"api/v1.0/leaderboard/imlek_game/",{
 
       method:"POST",
       headers: {
@@ -830,6 +834,8 @@ export class Menu extends Phaser.Scene {
           id: dataID,
           score: championData.stageRule,
           soundStatus: musicStatus,
+          token: gameToken,
+          apiUrl: urlData.apiLP_URL
         });
       }
 
@@ -841,8 +847,7 @@ export class Menu extends Phaser.Scene {
 
   getLeaderboardList(startPos, startCumPos, idTextArr, scoreTextArr, cumIdTextArr, scoreCumTextArr, button){
 
-    //fetch("https://linipoin-api.macroad.co.id/api/v1.0/leaderboard/leaderboard_imlek?limit_highscore=5&limit_total_score=5&linigame_platform_token=891ff5abb0c27161fb683bcaeb1d73accf1c9c5e", {
-    fetch("https://linipoin-dev.macroad.co.id/api/v1.0/leaderboard/leaderboard_imlek?limit_highscore=5&limit_total_score=5&linigame_platform_token=891ff5abb0c27161fb683bcaeb1d73accf1c9c5e", {
+    fetch(urlData.apiLP_URL+"api/v1.0/leaderboard/leaderboard_imlek?limit_highscore=5&limit_total_score=5&linigame_platform_token="+gameToken, {
 
       method: "GET",
     }).then(response => {
@@ -948,9 +953,8 @@ export class Menu extends Phaser.Scene {
 
     this.preloadAnimation(360, 690, 0.8, 20, 'preloader_menu');
 
-    //fetch("https://linipoin-api.macroad.co.id/api/v1.0/leaderboard/get_user_rank_imlek/?session="+userSession+"&linigame_platform_token=891ff5abb0c27161fb683bcaeb1d73accf1c9c5e&limit=5", {
-    fetch("https://linipoin-dev.macroad.co.id/api/v1.0/leaderboard/get_user_rank_imlek/?session="+userSession+"&linigame_platform_token=891ff5abb0c27161fb683bcaeb1d73accf1c9c5e&limit=5", {
 
+    fetch(urlData.apiLP_URL+"api/v1.0/leaderboard/get_user_rank_imlek/?session="+userSession+"&limit=5&linigame_platform_token="+gameToken, {
       method:"GET",
     }).then(response => {
 
@@ -1039,8 +1043,7 @@ export class Menu extends Phaser.Scene {
 
     this.deactivateMainButton(listButton);
 
-    //fetch('https://captive.macroad.co.id/api/v2/linigames/advertisement?email='+userEmail+'&dob='+userDOB+'&gender='+userGender+'&phone_number='+userPhone, {
-    fetch('https://captive-dev.macroad.co.id/api/v2/linigames/advertisement?email='+userEmail+'&dob='+userDOB+'&gender='+userGender+'&phone_number='+userPhone, {
+    fetch(urlData.apiCPV_URL+'api/v2/linigames/advertisement?email='+championData.userEmail+'&dob='+championData.userDOB+'&gender='+championData.userGender+'&phone_number='+championData.userPhone, {
 
       method: "GET",
     }).then(response => {
@@ -1115,8 +1118,7 @@ export class Menu extends Phaser.Scene {
 
   getConnectionStatus(){
 
-    //fetch('https://captive.macroad.co.id/api/v2/linigames/advertisement/connect/53?email='+userEmail+'&dob='+userDOB+'&gender='+userGender+'&phone_number='+userPhone, {
-    fetch('https://captive-dev.macroad.co.id/api/v2/linigames/advertisement/connect/53?email='+userEmail+'&dob='+userDOB+'&gender='+userGender+'&phone_number='+userPhone, {
+    fetch(urlData.apiCPV_URL+'api/v2/linigames/advertisement/connect/53?game_title=just_hop_lah&email='+championData.userEmail+'&dob='+championData.userDOB+'&gender='+championData.userGender+'&phone_number='+championData.userPhone, {
 
       method: 'GET',
     }).then(response => {
@@ -1129,7 +1131,7 @@ export class Menu extends Phaser.Scene {
       }
     }).then(data => {
 
-      //console.log(data.result.message);
+      console.log(data.result);
     }).catch(error => {
 
       //console.log(error);
