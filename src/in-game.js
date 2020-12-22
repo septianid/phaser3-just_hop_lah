@@ -458,7 +458,9 @@ export class In_Game extends Phaser.Scene {
     preload.setScale(0.5);
     preload.setDepth(1);
 
-    let requestID = CryptoJS.AES.encrypt('LG'+'+'+initData.gameToken+'+'+Date.now(), 'c0dif!#l1n!9am#enCr!pto9r4pH!*').toString()
+    let requestID = CryptoJS.AES.encrypt('LG'+'+'+initData.gameToken+'+'+Date.now(), CryptoJS.enc.Utf8.parse('c0dif!#l1n!9am#enCr!pto9r4pH!*12'), {
+      mode: CryptoJS.mode.ECB
+    }).toString()
     let final = {
 
       datas: CryptoJS.AES.encrypt(JSON.stringify({
@@ -468,7 +470,9 @@ export class In_Game extends Phaser.Scene {
         score: userScore,
         id: initData.idData,
         log: userLog,
-      }), 'c0dif!#l1n!9am#enCr!pto9r4pH!*').toString()
+      }), CryptoJS.enc.Utf8.parse('c0dif!#l1n!9am#enCr!pto9r4pH!*12'), {
+        mode: CryptoJS.mode.ECB
+      }).toString()
     }
 
     this.anims.create({

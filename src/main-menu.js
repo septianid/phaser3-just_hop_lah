@@ -49,20 +49,20 @@ export class Menu extends Phaser.Scene {
 
   create(){
 
-    urlData = {
-      apiLP_URL: 'https://linipoin-api.macroad.co.id/',    //// PRODUCTION
-      apiCPV_URL: 'https://captive.macroad.co.id/',
-    }
-
     // urlData = {
-    //   apiLP_URL: 'https://linipoin-dev.macroad.co.id/',    //// DEVELOPMENT
-    //   apiCPV_URL: 'https://captive-dev.macroad.co.id/',
+    //   apiLP_URL: 'https://linipoin-api.macroad.co.id/',    //// PRODUCTION
+    //   apiCPV_URL: 'https://captive.macroad.co.id/',
     // }
 
     // urlData = {
     //   apiLP_URL: 'https://sb.macroad.co.id/linipoin/',    //// PRE-PRODUCTION
     //   apiCPV_URL: 'https://captive-dev.macroad.co.id/',
     // }
+
+    urlData = {
+      apiLP_URL: 'https://linipoin-dev.macroad.co.id/',    //// DEVELOPMENT
+      apiCPV_URL: 'https://captive-dev.macroad.co.id/',
+    }
 
     // urlData = {
     //   apiLP_URL: 'https://7f41949f7b4a.ngrok.io/',             //// DEVELOPMENT-LOCAL
@@ -705,7 +705,9 @@ export class Menu extends Phaser.Scene {
       datas: CryptoJS.AES.encrypt(JSON.stringify({
         session: userSession,
         linigame_platform_token: gameToken
-      }), 'c0dif!#l1n!9am#enCr!pto9r4pH!*').toString()
+      }), CryptoJS.enc.Utf8.parse('c0dif!#l1n!9am#enCr!pto9r4pH!*12'), {
+        mode: CryptoJS.mode.ECB
+      }).toString()
     }
 
     fetch(urlData.apiLP_URL+"api/v1.0/leaderboard/check_user_limit/", {
@@ -788,7 +790,9 @@ export class Menu extends Phaser.Scene {
   postDataOnStart(start, sessionUser, isWatchAd){
 
     let dataID;
-    let requestID = CryptoJS.AES.encrypt('LG'+'+'+gameToken+'+'+Date.now(), 'c0dif!#l1n!9am#enCr!pto9r4pH!*').toString()
+    let requestID = CryptoJS.AES.encrypt('LG'+'+'+gameToken+'+'+Date.now(), CryptoJS.enc.Utf8.parse('c0dif!#l1n!9am#enCr!pto9r4pH!*12'), {
+      mode: CryptoJS.mode.ECB
+    }).toString()
     let final
     let data = {
       linigame_platform_token: gameToken,
@@ -802,13 +806,17 @@ export class Menu extends Phaser.Scene {
     if (isWatchAd === true){
       data.play_video = 'full_played'
       final = {
-        datas: CryptoJS.AES.encrypt(JSON.stringify(data), 'c0dif!#l1n!9am#enCr!pto9r4pH!*').toString()
+        datas: CryptoJS.AES.encrypt(JSON.stringify(data), CryptoJS.enc.Utf8.parse('c0dif!#l1n!9am#enCr!pto9r4pH!*12'), {
+          mode: CryptoJS.mode.ECB
+        }).toString()
       }
     }
     else {
       data.play_video = 'not_played'
       final = {
-        datas: CryptoJS.AES.encrypt(JSON.stringify(data), 'c0dif!#l1n!9am#enCr!pto9r4pH!*').toString()
+        datas: CryptoJS.AES.encrypt(JSON.stringify(data), CryptoJS.enc.Utf8.parse('c0dif!#l1n!9am#enCr!pto9r4pH!*12'), {
+          mode: CryptoJS.mode.ECB
+        }).toString()
       }
     }
 
@@ -846,7 +854,7 @@ export class Menu extends Phaser.Scene {
 
     }).catch(error => {
 
-      //console.log(error);
+      console.log(error);
     });
   }
 
@@ -972,7 +980,7 @@ export class Menu extends Phaser.Scene {
       //   button.setInteractive();
       // }
 
-      if(data.result.rank_high_score === 0){
+      if(data.result.rank_high_score === null){
 
         userHighScoreRankText = this.add.text(195, 1030, '-', {
           font: 'bold 32px Arial',
@@ -1005,7 +1013,7 @@ export class Menu extends Phaser.Scene {
         userHighScoreText.setOrigin(1, 0.5);
       }
 
-      if(data.result.rank_total_score === 0){
+      if(data.result.rank_total_score === null){
 
         userCumHighScoreRankText = this.add.text(195, 1085, '-', {
           font: 'bold 32px Arial',
